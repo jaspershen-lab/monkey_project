@@ -60,19 +60,19 @@ map_uniprot_ids <- function(uniprot_ids, to_db) {
 
 # # Your UniProt IDs
 # uniprot_ids <- c("A0A0K2ZAK1", "A0A0U5NNJ0", "A0A0U5P8Q9")
-# 
+#
 # # Map to Ensembl Gene IDs
 # ensembl_mapping <- map_uniprot_ids(uniprot_ids, to_db = "ENSEMBL_ID")
 
-# 
-# 
+#
+#
 # library(mygene)
-# 
-# 
+#
+#
 # library(mygene)
-# 
+#
 # uniprot_ids <- c("A0A0K2ZAK1", "A0A0U5NNJ0", "A0A0U5P8Q9")
-# 
+#
 # # Query MyGene.info for mappings
 # results <- queryMany(
 #   uniprot_ids,
@@ -83,11 +83,10 @@ map_uniprot_ids <- function(uniprot_ids, to_db) {
 
 
 sex_color <-
-c("Female" = "#FF69B4",
-  "Male" = "#1E90FF")
+  c("Female" = "#FF69B4", "Male" = "#1E90FF")
 
 my_theme <-
-ggplot2::theme_bw() +
+  ggplot2::theme_bw() +
   ggplot2::theme(
     text = ggplot2::element_text(size = 16),
     axis.text = ggplot2::element_text(size = 14),

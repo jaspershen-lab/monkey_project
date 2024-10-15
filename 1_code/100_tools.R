@@ -80,3 +80,18 @@ map_uniprot_ids <- function(uniprot_ids, to_db) {
 #   fields = c("entrezgene", "ensembl.gene"),
 #   species = 9545  # Use Taxonomy ID instead of species name
 # )
+
+
+sex_color <-
+c("Female" = "#FF69B4",
+  "Male" = "#1E90FF")
+
+my_theme <-
+ggplot2::theme_bw() +
+  ggplot2::theme(
+    text = ggplot2::element_text(size = 16),
+    axis.text = ggplot2::element_text(size = 14),
+    axis.title = ggplot2::element_text(size = 16),
+    legend.text = ggplot2::element_text(size = 14),
+    legend.title = ggplot2::element_text(size = 16)
+  )

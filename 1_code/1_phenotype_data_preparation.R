@@ -15,8 +15,8 @@ phenotype_info$date_collection <-
 
 
 phenotype_info$age <-
-  (phenotype_info$date_collection - phenotype_info$Birth) / 365 %>%
-  as.numeric()
+  as.numeric((phenotype_info$date_collection - phenotype_info$Birth) / 365)
+
 
 phenotype_info <-
   phenotype_info %>%
@@ -36,5 +36,8 @@ phenotype_info <-
   )
 
 phenotype_info
+
+save(phenotype_info, file = "phenotype_info.RData")
+
 
 

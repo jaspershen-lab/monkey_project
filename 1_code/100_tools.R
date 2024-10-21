@@ -94,3 +94,28 @@ my_theme <-
     legend.text = ggplot2::element_text(size = 14),
     legend.title = ggplot2::element_text(size = 16)
   )
+
+
+get_mfuzz_center <- function(data, c, membership_cutoff = 0.5) {
+  data <-
+    data@assayData$exprs
+  
+  membership <- c$membership
+  
+  membership <-
+    membership %>%
+    as.data.frame() %>%
+    purrr::map(function(x) {
+      rownames(membership)[which(x >= membership_cutoff)]
+    })
+  
+  centers <-
+    membership %>%
+    purrr::map(function(x) {
+      apply(data[x, , drop = FALSE], 2, mean)
+    }) %>%
+    dplyr::bind_rows() %>%
+    as.data.frame()
+  centers
+  
+}

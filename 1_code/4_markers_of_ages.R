@@ -158,5 +158,37 @@ age_markers_consistent_down <-
 dim(age_markers_consistent_up)
 dim(age_markers_consistent_down)
 
+age_marker_male_up <-
+  age_markers %>%
+  dplyr::filter(cor_male > 0 & p_male_fdr < 0.05 &
+                  cor_female < 0)
+
+age_marker_male_down <-
+  age_markers %>%
+  dplyr::filter(cor_male < 0 & p_male_fdr < 0.05 &
+                  cor_female > 0)
 
 
+age_marker_female_up <-
+  age_markers %>%
+  dplyr::filter(cor_female > 0 & p_female_fdr < 0.05 &
+                  cor_male < 0)
+
+age_marker_female_down <-
+  age_markers %>%
+  dplyr::filter(cor_female < 0 & p_female_fdr < 0.05 &
+                  cor_male > 0)
+
+
+write.csv(age_markers_consistent_up,
+          "age_markers_consistent_up.csv",
+          row.names = FALSE)
+write.csv(age_markers_consistent_down,
+          "age_markers_consistent_down.csv",
+          row.names = FALSE)
+write.csv(age_marker_male_up, "age_marker_male_up.csv", row.names = FALSE)
+write.csv(age_marker_male_down, "age_marker_male_down.csv", row.names = FALSE)
+write.csv(age_marker_female_up, "age_marker_female_up.csv", row.names = FALSE)
+write.csv(age_marker_female_down,
+          "age_marker_female_down.csv",
+          row.names = FALSE)

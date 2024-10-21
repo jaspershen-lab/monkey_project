@@ -51,12 +51,15 @@ rsconnect/
 2_data
 2_data/
 
-3_data_analysis
-3_data_analysis/
-
 4_manuscript
 4_manuscript/
 
 5_summary
 5_summary/
 
+###ignore large files
+
+3_data_analysis/2_proteomics_data_preparation/gene2accession.gz
+3_data_analysis/2_proteomics_data_preparation/gene2pubmed.gz
+3_data_analysis/2_proteomics_data_preparation/NCBI.sqlite
+3_data_analysis/5_clustring/1_all_samples/temp_data.txt

@@ -29,11 +29,43 @@ sample_info <-
 variable_info <-
   extract_variable_info(proteomics_data)
 
+
+###combine samples into different age groups
+sample_info$age_group <-
+  cut(sample_info$age,
+      breaks = c(0:24),
+      labels = c(paste(0:23, "-", 1:24, sep = "")))
+
+expression_data_new <-
+  as.character(sort(unique(sample_info$age_group))) %>%
+  purrr::map(function(x) {
+    cat(x, " ")
+    idx <-
+      which(sample_info$age_group == x)
+    expression_data[, idx, drop = FALSE] %>%
+      apply(1, mean)
+  }) %>%
+  do.call(cbind, .) %>%
+  as.data.frame()
+
+colnames(expression_data_new) <-
+  as.character(sort(unique(sample_info$age_group)))
+
+sample_info_new <-
+  data.frame(
+    sample_id = colnames(expression_data_new),
+    age = stringr::str_split(colnames(expression_data_new), "-") %>%
+      lapply(function(x) {
+        mean(as.numeric(x))
+      }) %>% unlist
+  )
+
+
 ###fuzzy c meaning clustering
 library(Mfuzz)
-time <- sample_info$age
+time <- sample_info_new$age
 
-temp_data <- rbind(time, expression_data)
+temp_data <- rbind(time, expression_data_new)
 rownames(temp_data)[1] <- "time"
 rownames(temp_data)
 
@@ -51,7 +83,7 @@ data.s <- standardise(data)
 # data.s <- data
 m1 <- mestimate(data.s)
 m1
-
+#
 # plot <-
 #   Dmin(
 #     data.s,
@@ -60,9 +92,9 @@ m1
 #     repeats = 3,
 #     visu = TRUE
 #   )
-# 
+#
 # plot
-# 
+#
 # plot <-
 #   plot %>%
 #   data.frame(distance = plot, k = seq(2, 40, 2)) %>%
@@ -90,19 +122,19 @@ m1
 #   ) +
 #   labs(x = "Cluster number", y = "Min. centroid distance") +
 #   scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
-# 
+#
 # plot
-# 
+#
 # ggsave(plot,
 #        filename = "distance_k_number.pdf",
 #        width = 7,
 #        height = 7)
 
-cluster_number <- 10
+cluster_number <- 12
 
-# c <- mfuzz(data.s, c = cluster_number, m = m1)
-# 
-# save(c, file = "c")
+c <- mfuzz(data.s, c = cluster_number, m = m1)
+
+save(c, file = "c")
 load("c")
 
 # ####any two clusters with correlation > 0.8 should be considered as one
@@ -110,7 +142,7 @@ library(corrplot)
 layout(1)
 # center <- c$centers
 
-membership_cutoff <- 0.5
+membership_cutoff <- 0.8
 
 center <-
   get_mfuzz_center(data = data.s,
@@ -135,7 +167,7 @@ corrplot::corrplot(
 
 mfuzz.plot(
   eset = data.s,
-  min.mem = 0.5,
+  min.mem = 0.8,
   cl = c,
   mfrow = c(3, 4),
   time.labels = time,
@@ -163,13 +195,12 @@ temp_data <-
 variable_info <-
   proteomics_data@variable_info
 
-
 temp_data <-
-  expression_data %>% 
-  apply(1, function(x){
+  expression_data_new %>%
+  apply(1, function(x) {
     (x - mean(x)) / sd(x)
-  }) %>% 
-  t() %>% 
+  }) %>%
+  t() %>%
   as.data.frame()
 
 for (idx in 1:cluster_number) {
@@ -218,7 +249,7 @@ for (idx in 1:cluster_number) {
       names_to = "sample_id",
       values_to = "value"
     ) %>%
-    dplyr::left_join(sample_info[,c("sample_id", "age")], by = "sample_id") %>% 
+    dplyr::left_join(sample_info_new[, c("sample_id", "age")], by = "sample_id") %>%
     dplyr::mutate(age = as.numeric(age))
   
   plot <-
@@ -241,7 +272,7 @@ for (idx in 1:cluster_number) {
     ) +
     labs(
       x = "",
-      y = "Z-score",
+      y = "Z - score",
       title = paste("Cluster ", idx, " (", nrow(cluster_data), " proteincs)", sep = "")
     ) +
     geom_line(
@@ -249,7 +280,7 @@ for (idx in 1:cluster_number) {
       data = temp_center,
       size = 2
     ) +
-    geom_hline(yintercept = 0) 
+    geom_hline(yintercept = 0)
   # viridis::scale_color_viridis()
   
   plot
@@ -288,7 +319,7 @@ cluster_info %>%
   dplyr::count(cluster)
 
 cluster_info %>%
-  dplyr::filter(membership > 0.5) %>%
+  dplyr::filter(membership > 0.8) %>%
   dplyr::count(cluster)
 
 final_cluster_info <-
